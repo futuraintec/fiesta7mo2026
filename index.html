@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verificador de Recibos — Fiesta 7mo. 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --dark: #0D0B1E;
+  --purple: #7C3AED;
+  --purple-light: #A78BFA;
+  --purple-glow: rgba(124,58,237,0.3);
+  --pink: #EC4899;
+  --pink-light: #F9A8D4;
+  --neon-blue: #38BDF8;
+  --green: #10B981;
+  --red: #EF4444;
+  --surface: #1A1733;
+  --surface2: #241F42;
+  --border: rgba(167,139,250,0.2);
+  --text: #E2E0F0;
+  --text-dim: #8B88A8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Animated background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 20%, rgba(124,58,237,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(236,72,153,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 60% 10%, rgba(56,189,248,0.07) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Grid pattern */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(167,139,250,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(167,139,250,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+  animation: fadeDown 0.7s ease both;
+}
+
+.logo-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px; height: 80px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 40px var(--purple-glow);
+  overflow: hidden;
+}
+.logo-wrap img { width: 70px; height: auto; object-fit: contain; }
+
+.header h1 {
+  font-size: clamp(22px, 5vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--purple-light) 0%, var(--pink-light) 60%, var(--neon-blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.header p {
+  color: var(--text-dim);
+  font-size: 14px;
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.5px;
+}
+
+/* Card */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(167,139,250,0.05);
+  animation: fadeUp 0.6s ease both 0.2s;
+}
+
+.card-label {
+  font-size: 11px;
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 2px;
+  color: var(--purple-light);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+.input-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+.input-group input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 13px 16px;
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  font-size: 15px;
+  letter-spacing: 1px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-group input:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px var(--purple-glow);
+}
+.input-group input::placeholder { color: rgba(139,136,168,0.5); letter-spacing: 0.5px; }
+
+.hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 6px;
+  font-family: 'Space Mono', monospace;
+}
+
+.btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+  box-shadow: 0 4px 24px rgba(124,58,237,0.4);
+  margin-top: 8px;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(124,58,237,0.5); }
+.btn:active { transform: translateY(0); opacity: 0.9; }
+
+/* Result card */
+.result {
+  margin-top: 28px;
+  border-radius: 16px;
+  overflow: hidden;
+  display: none;
+  animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.result.show { display: block; }
+
+.result-header {
+  padding: 20px 24px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.result-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.result-title { font-size: 18px; font-weight: 800; }
+.result-sub { font-size: 12px; font-family: 'Space Mono', monospace; opacity: 0.8; margin-top: 2px; }
+
+.result.valid { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); }
+.result.valid .result-icon { background: rgba(16,185,129,0.2); }
+.result.valid .result-title { color: #6EE7B7; }
+
+.result.invalid { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); }
+.result.invalid .result-icon { background: rgba(239,68,68,0.15); }
+.result.invalid .result-title { color: #FCA5A5; }
+
+.result-body {
+  padding: 0 24px 24px;
+}
+.data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(167,139,250,0.08);
+  gap: 12px;
+}
+.data-row:last-child { border-bottom: none; }
+.data-key {
+  font-size: 11px;
+  font-family: 'Space Mono', monospace;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+.data-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: right;
+}
+.data-val.mono { font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 1px; }
+.data-val.monto {
+  font-size: 20px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--purple-light), var(--pink-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  color: var(--text-dim);
+  font-size: 12px;
+  font-family: 'Space Mono', monospace;
+  line-height: 1.8;
+  animation: fadeUp 0.6s ease both 0.4s;
+}
+.footer a { color: var(--purple-light); text-decoration: none; }
+
+/* Animations */
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Pulse on logo */
+.logo-wrap {
+  animation: fadeDown 0.7s ease both, pulse 4s ease-in-out 1s infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 30px var(--purple-glow); }
+  50%       { box-shadow: 0 0 55px rgba(124,58,237,0.5), 0 0 80px rgba(236,72,153,0.15); }
+}
+
+/* Scanning line animation inside result */
+.scan-line {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+  animation: scan 1.5s ease-in-out;
+}
+@keyframes scan {
+  from { transform: scaleX(0); opacity: 1; }
+  to   { transform: scaleX(1); opacity: 0; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="logo-wrap">
+      <!-- Replace src with actual logo path if hosting locally -->
+      <img src="logo_7mo.png" alt="Fiesta 7mo 2026" onerror="this.style.display='none';this.parentNode.innerHTML='<span style=\'font-size:32px\'>🎉</span>'">
+    </div>
+    <h1>Verificador de Recibos<br>Fiesta 7mo. 2026</h1>
+    <p>Sistema de autenticidad · Comite de Fiesta 7mo. 2026</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Ingresar datos del recibo</div>
+
+    <div class="input-group">
+      <label>Numero de recibo</label>
+      <input type="number" id="inp-num" placeholder="001" min="1" max="999">
+      <p class="hint">Aparece en la esquina superior derecha del recibo</p>
+    </div>
+
+    <div class="input-group">
+      <label>Codigo de validacion</label>
+      <input type="text" id="inp-code" placeholder="RC-2026-001-XXXXXXXX" maxlength="20"
+             oninput="this.value=this.value.toUpperCase()">
+      <p class="hint">Codigo completo impreso bajo el codigo QR</p>
+    </div>
+
+    <button class="btn" onclick="verificar()">Verificar autenticidad</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="footer">
+    <p>Comite de Fiesta de Graduacion 7mo. Grado 2026</p>
+    <p>Este sistema verifica la autenticidad de los recibos emitidos oficialmente.</p>
+    <p style="margin-top:8px;">¿Dudas? Contacta al comite directamente.</p>
+  </div>
+
+</div>
+
+<script>
+// ── VALIDATION DATABASE ────────────────────────────────────────────────────
+// Generated from payment data. Each entry: [correlativo, nombre, seccion, monto, fecha, codigo]
+const RECIBOS = [
+  [1, "Anika Tanchez Escobar", "C", 1800.0, "08/05/2026", "RC-2026-001-5O53SSKA"],
+  [2, "Emily Rosenfelder", "C", 1900.0, "09/05/2026", "RC-2026-002-G3NJTBBB"],
+  [3, "Valeria Orantes", "C", 1900.0, "11/05/2026", "RC-2026-003-IISC2DVY"],
+  [4, "Stefanie Sofía van der Wals Galdámez", "C", 1500.0, "11/05/2026", "RC-2026-004-4ID2GQKA"],
+  [5, "Stefanie Sofía van der Wals Galdámez", "C", 100.0, "11/05/2026", "RC-2026-005-B7JM5JBY"],
+  [6, "Andrés Duarte", "B", 1900.0, "11/05/2026", "RC-2026-006-5OAOQ7JL"],
+  [7, "Maria Alejandra Aleman Martinez", "D", 400.0, "11/05/2026", "RC-2026-007-EHOSMXHU"],
+  [8, "Maria Alejandra Aleman Martinez", "D", 1500.0, "11/05/2026", "RC-2026-008-BYI4RE7H"],
+  [9, "Sofía Durán Sosa", "B", 1900.0, "11/05/2026", "RC-2026-009-5SZ5NUJR"],
+  [10, "Oliver Vogel Valladares", "C", 1900.0, "11/05/2026", "RC-2026-010-56WUNG2A"],
+  [11, "Lucas Isaac Sosa Arroyave", "B", 1900.0, "12/05/2026", "RC-2026-011-P6YGLZDT"],
+  [12, "Francesca Poggio", "B", 1800.0, "12/05/2026", "RC-2026-012-WSEGZRNV"],
+  [13, "Ignacio Moralejo", "B", 1900.0, "13/05/2026", "RC-2026-013-O6JOKBNO"],
+  [14, "Daniela Alvarado", "B", 1800.0, "13/05/2026", "RC-2026-014-PFBVR5UF"],
+  [15, "Luca de silvestris", "B", 1600.0, "13/05/2026", "RC-2026-015-HVFRGBHZ"]
+];
+
+// Build lookup map
+const LOOKUP = {};
+RECIBOS.forEach(r => {
+  LOOKUP[r[0]] = { correlativo: r[0], nombre: r[1], seccion: r[2], monto: r[3], fecha: r[4], codigo: r[5] };
+});
+
+function formatMonto(m) {
+  return 'Q ' + Number(m).toLocaleString('es-GT', { minimumFractionDigits: 2 });
+}
+
+function verificar() {
+  const numRaw  = document.getElementById('inp-num').value.trim();
+  const codeRaw = document.getElementById('inp-code').value.trim().toUpperCase();
+  const result  = document.getElementById('result');
+
+  // Basic validation
+  if (!numRaw || !codeRaw) {
+    showError(result, 'Por favor ingresa el numero de recibo y el codigo de validacion.');
+    return;
+  }
+
+  const num = parseInt(numRaw, 10);
+  const entry = LOOKUP[num];
+
+  let html = '';
+
+  if (!entry) {
+    html = `
+      <div class="result-header">
+        <div class="result-icon">❌</div>
+        <div>
+          <div class="result-title">Recibo no encontrado</div>
+          <div class="result-sub">El numero ${num.toString().padStart(3,'0')} no existe en el sistema</div>
+        </div>
+      </div>
+      <div class="result-body">
+        <div class="data-row"><span class="data-key">Estado</span><span class="data-val" style="color:#FCA5A5;">NO VALIDO</span></div>
+        <div class="data-row"><span class="data-key">Recomendacion</span><span class="data-val" style="font-size:13px;color:#FCA5A5;">Contacta al comite para verificar</span></div>
+      </div>`;
+    result.className = 'result show invalid';
+  } else if (entry.codigo === codeRaw) {
+    html = `
+      <div class="scan-line"></div>
+      <div class="result-header">
+        <div class="result-icon">✅</div>
+        <div>
+          <div class="result-title">Recibo autentico</div>
+          <div class="result-sub">Verificado · Comite Fiesta 7mo. 2026</div>
+        </div>
+      </div>
+      <div class="result-body">
+        <div class="data-row">
+          <span class="data-key">Familia</span>
+          <span class="data-val">${entry.nombre}</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">Seccion</span>
+          <span class="data-val">Seccion ${entry.seccion}</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">Fecha de pago</span>
+          <span class="data-val">${entry.fecha}</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">Monto</span>
+          <span class="data-val monto">${formatMonto(entry.monto)}</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">Codigo</span>
+          <span class="data-val mono">${entry.codigo}</span>
+        </div>
+        <div class="data-row">
+          <span class="data-key">Estado</span>
+          <span class="data-val" style="color:#6EE7B7;font-size:16px;">✓ PAGO CONFIRMADO</span>
+        </div>
+      </div>`;
+    result.className = 'result show valid';
+  } else {
+    html = `
+      <div class="result-header">
+        <div class="result-icon">⚠️</div>
+        <div>
+          <div class="result-title">Codigo incorrecto</div>
+          <div class="result-sub">El recibo No. ${num.toString().padStart(3,'0')} existe pero el codigo no coincide</div>
+        </div>
+      </div>
+      <div class="result-body">
+        <div class="data-row"><span class="data-key">Estado</span><span class="data-val" style="color:#FCA5A5;">POSIBLE FALSIFICACION</span></div>
+        <div class="data-row"><span class="data-key">Accion</span><span class="data-val" style="font-size:13px;color:#FCA5A5;">Contacta inmediatamente al comite</span></div>
+      </div>`;
+    result.className = 'result show invalid';
+  }
+
+  result.innerHTML = html;
+
+  // Allow Enter key
+  result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showError(el, msg) {
+  el.innerHTML = `<div class="result-header"><div class="result-icon">⚠️</div><div><div class="result-title" style="font-size:15px;color:#FCD34D;">${msg}</div></div></div>`;
+  el.className = 'result show invalid';
+}
+
+// Enter key support
+document.addEventListener('keydown', e => { if (e.key === 'Enter') verificar(); });
+
+// Auto-fill from URL params (QR code redirect)
+window.addEventListener('load', () => {
+  const params = new URLSearchParams(window.location.search);
+  const codigo = params.get('codigo');
+  const rec    = params.get('rec');
+  if (rec)    document.getElementById('inp-num').value  = parseInt(rec, 10);
+  if (codigo) document.getElementById('inp-code').value = codigo.toUpperCase();
+  if (rec && codigo) {
+    setTimeout(verificar, 400);
+  }
+});
+</script>
+</body>
+</html>
