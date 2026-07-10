@@ -3,412 +3,154 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fiesta 7mo. 2026 — Comité</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎉</text></svg>">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<title>Verificador de Recibos — Fiesta 7mo. 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#F8F9FC;--surface:#fff;--surface2:#F1F3F9;--border:#E2E6F0;--text:#111827;--text2:#6B7280;--text3:#9CA3AF;--radius:10px;--shadow:0 1px 3px rgba(0,0,0,0.08);}
+:root{--dark:#0D0B1E;--purple:#7C3AED;--purple-light:#A78BFA;--purple-glow:rgba(124,58,237,0.3);--pink:#EC4899;--pink-light:#F9A8D4;--neon-blue:#38BDF8;--green:#10B981;--red:#EF4444;--surface:#1A1733;--surface2:#241F42;--border:rgba(167,139,250,0.2);--text:#E2E0F0;--text-dim:#8B88A8;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;}
-.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
-.topbar-brand{display:flex;flex-direction:column;}
-.topbar-title{font-size:15px;font-weight:700;}
-.topbar-sub{font-size:11px;color:var(--text2);}
-.nav{display:flex;gap:2px;background:var(--surface2);border-radius:8px;padding:3px;}
-.nav button{padding:5px 12px;border-radius:6px;border:none;background:none;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all 0.15s;}
-.nav button.active{background:var(--surface);color:#534AB7;box-shadow:var(--shadow);font-weight:600;}
-.right-bar{display:flex;align-items:center;gap:10px;}
-.sync-badge{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:default;}
-.sync-badge.ok{background:#EAF3DE;color:#3B6D11;border-color:#C0DD97;}
-.sync-badge.saving{background:#FAEEDA;color:#854F0B;border-color:#FAC775;}
-.sync-badge.err{background:#FCEBEB;color:#A32D2D;border-color:#F09595;}
-.sync-btn{padding:5px 12px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-size:12px;cursor:pointer;color:var(--text2);font-weight:500;}
-.sync-btn:hover{background:var(--surface2);}
-.main{padding:20px;max-width:1100px;margin:0 auto;}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
-.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);}
-.metric-label{font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500;}
-.metric-value{font-size:22px;font-weight:700;line-height:1;}
-.metric-sub{font-size:11px;color:var(--text3);margin-top:4px;}
-.section{display:none;}.section.active{display:block;}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
-.card-title{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:14px;letter-spacing:0.3px;text-transform:uppercase;}
-table{width:100%;border-collapse:collapse;font-size:13px;}
-th{text-align:left;padding:9px 12px;font-size:11px;font-weight:600;color:var(--text2);border-bottom:1px solid var(--border);background:var(--surface2);white-space:nowrap;}
-td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
-tr:last-child td{border-bottom:none;}
-tr:hover td{background:var(--surface2);}
-.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
-.prog-bg{background:var(--surface2);border-radius:4px;height:6px;overflow:hidden;}
-.prog-fill{height:100%;border-radius:4px;transition:width 0.3s;}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
-.fg{display:flex;flex-direction:column;gap:5px;}
-.fg.full{grid-column:1/-1;}
-.fg label{font-size:12px;font-weight:600;color:var(--text2);}
-input,select,textarea{font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);width:100%;outline:none;transition:border-color 0.15s;}
-input:focus,select:focus{border-color:#534AB7;box-shadow:0 0 0 3px rgba(83,74,183,0.1);}
-input[readonly]{background:var(--surface2);color:var(--text2);}
-button{padding:8px 16px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;}
-button:hover{background:var(--surface2);}
-.btn-primary{background:#534AB7;color:#fff;border-color:#534AB7;}
-.btn-primary:hover{background:#3C3489;}
-.btn-green{background:#3B6D11;color:#fff;border-color:#3B6D11;}
-.btn-green:hover{background:#27500A;}
-.btn-sm{padding:4px 10px;font-size:12px;}
-.filter-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
-.filter-row input,.filter-row select{width:auto;flex:1;min-width:140px;}
-.empty{text-align:center;padding:40px;color:var(--text3);font-size:13px;}
-.err{font-size:12px;color:#A32D2D;margin-top:6px;display:none;}
-.chart-wrap{position:relative;height:200px;}
-.loading{position:fixed;inset:0;background:rgba(248,249,252,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;gap:12px;}
-.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:#534AB7;border-radius:50%;animation:spin 0.7s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.loading-text{font-size:13px;color:var(--text2);font-weight:500;}
-@media(max-width:700px){
-  .metrics{grid-template-columns:1fr 1fr;}
-  .grid2{grid-template-columns:1fr;}
-  .form-grid{grid-template-columns:1fr;}
-  .fg.full{grid-column:1;}
-  .nav button{padding:4px 8px;font-size:11px;}
-  .topbar{height:auto;padding:10px 14px;flex-wrap:wrap;gap:8px;}
-}
+body{background:var(--dark);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 20% 20%,rgba(124,58,237,0.15) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 80% 80%,rgba(236,72,153,0.1) 0%,transparent 60%);pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(167,139,250,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(167,139,250,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+.container{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:40px 20px 60px;}
+.header{text-align:center;margin-bottom:48px;animation:fadeDown 0.7s ease both;}
+.logo-wrap{display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;margin-bottom:20px;box-shadow:0 0 40px var(--purple-glow);overflow:hidden;animation:fadeDown 0.7s ease both,pulse 4s ease-in-out 1s infinite;}
+.logo-wrap img{width:70px;height:auto;object-fit:contain;}
+.header h1{font-size:clamp(22px,5vw,30px);font-weight:800;background:linear-gradient(135deg,var(--purple-light) 0%,var(--pink-light) 60%,var(--neon-blue) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-bottom:8px;}
+.header p{color:var(--text-dim);font-size:14px;font-family:'Space Mono',monospace;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;box-shadow:0 8px 40px rgba(0,0,0,0.4);animation:fadeUp 0.6s ease both 0.2s;}
+.card-label{font-size:11px;font-family:'Space Mono',monospace;letter-spacing:2px;color:var(--purple-light);text-transform:uppercase;margin-bottom:8px;}
+.input-group{margin-bottom:20px;}
+.input-group label{display:block;font-size:13px;font-weight:600;color:var(--text-dim);margin-bottom:8px;}
+.input-group input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 16px;color:var(--text);font-family:'Space Mono',monospace;font-size:15px;letter-spacing:1px;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.input-group input:focus{border-color:var(--purple);box-shadow:0 0 0 3px var(--purple-glow);}
+.input-group input::placeholder{color:rgba(139,136,168,0.5);}
+.hint{font-size:11px;color:var(--text-dim);margin-top:6px;font-family:'Space Mono',monospace;}
+.btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--purple) 0%,var(--pink) 100%);border:none;border-radius:12px;color:white;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 4px 24px rgba(124,58,237,0.4);margin-top:8px;}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(124,58,237,0.5);}
+.result{margin-top:28px;border-radius:16px;overflow:hidden;display:none;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;}
+.result.show{display:block;}
+.result-header{padding:20px 24px 16px;display:flex;align-items:center;gap:14px;}
+.result-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.result-title{font-size:18px;font-weight:800;}
+.result-sub{font-size:12px;font-family:'Space Mono',monospace;opacity:0.8;margin-top:2px;}
+.result.valid{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);}
+.result.valid .result-icon{background:rgba(16,185,129,0.2);}
+.result.valid .result-title{color:#6EE7B7;}
+.result.invalid{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);}
+.result.invalid .result-icon{background:rgba(239,68,68,0.15);}
+.result.invalid .result-title{color:#FCA5A5;}
+.result-body{padding:0 24px 24px;}
+.data-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(167,139,250,0.08);gap:12px;}
+.data-row:last-child{border-bottom:none;}
+.data-key{font-size:11px;font-family:'Space Mono',monospace;color:var(--text-dim);letter-spacing:0.5px;text-transform:uppercase;flex-shrink:0;padding-top:1px;}
+.data-val{font-size:14px;font-weight:600;color:var(--text);text-align:right;}
+.data-val.mono{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;}
+.data-val.monto{font-size:20px;font-weight:800;background:linear-gradient(135deg,var(--purple-light),var(--pink-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.divider{height:1px;background:var(--border);margin:28px 0;}
+.footer{text-align:center;margin-top:40px;color:var(--text-dim);font-size:12px;font-family:'Space Mono',monospace;line-height:1.8;animation:fadeUp 0.6s ease both 0.4s;}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 30px var(--purple-glow)}50%{box-shadow:0 0 55px rgba(124,58,237,0.5),0 0 80px rgba(236,72,153,0.15)}}
 </style>
 </head>
 <body>
-
-<div id="loading" class="loading">
-  <div class="spinner"></div>
-  <div class="loading-text">Conectando con Google Sheets...</div>
-</div>
-
-<div class="topbar">
-  <div class="topbar-brand">
-    <div class="topbar-title">🎉 Fiesta 7mo. Grado 2026</div>
-    <div class="topbar-sub">Sistema de pagos — Comité</div>
-  </div>
-  <div class="right-bar">
-    <span class="sync-badge" id="sync-st">Conectando...</span>
-    <button class="sync-btn" onclick="syncAll()">↺ Actualizar</button>
-    <div class="nav">
-      <button class="active" onclick="showTab('dash')">Dashboard</button>
-      <button onclick="showTab('familias')">Familias</button>
-      <button onclick="showTab('reg-pago')">+ Pago</button>
-      <button onclick="showTab('reg-gasto')">+ Gasto</button>
-      <button onclick="showTab('hist-pagos')">Historial</button>
-      <button onclick="showTab('hist-gastos')">Gastos</button>
+<div class="container">
+  <div class="header">
+    <div class="logo-wrap">
+      <img src="logo_7mo.png" alt="Fiesta 7mo 2026" onerror="this.style.display='none';this.parentNode.innerHTML='<span style=\'font-size:32px\'>🎉</span>'">
     </div>
-  </div>
-</div>
-
-<div class="main">
-  <div class="metrics" id="metrics"></div>
-
-  <!-- DASHBOARD -->
-  <div class="section active" id="section-dash">
-    <div class="grid2">
-      <div class="card"><div class="card-title">Recaudación vs meta</div><div class="chart-wrap"><canvas id="cDonut"></canvas></div></div>
-      <div class="card"><div class="card-title">Por sección</div><div class="chart-wrap"><canvas id="cSec"></canvas></div></div>
-    </div>
-    <div class="card" style="margin-bottom:14px;"><div class="card-title">Avance por sección</div><div id="secProg"></div></div>
-    <div class="card"><div class="card-title">Balance financiero</div><div id="balance"></div></div>
+    <h1>Verificador de Recibos<br>Fiesta 7mo. 2026</h1>
+    <p>Sistema de autenticidad · Comite de Fiesta 7mo. 2026</p>
   </div>
 
-  <!-- FAMILIAS -->
-  <div class="section" id="section-familias">
-    <div class="filter-row">
-      <input type="text" id="ff-s" placeholder="Buscar alumno/a..." oninput="renderFamilias()">
-      <select id="ff-sec" onchange="renderFamilias()"><option value="">Todas las secciones</option><option>A</option><option>B</option><option>C</option><option>D</option></select>
-      <select id="ff-est" onchange="renderFamilias()"><option value="">Todos los estados</option><option>Pagado</option><option>Abonado</option><option>Pendiente</option></select>
+  <div class="card">
+    <div class="card-label">Ingresar datos del recibo</div>
+    <div class="input-group">
+      <label>Numero de recibo</label>
+      <input type="number" id="inp-num" placeholder="001" min="1" max="999">
+      <p class="hint">Aparece en la esquina superior derecha del recibo</p>
     </div>
-    <div class="card" style="overflow-x:auto;">
-      <table><thead><tr><th>Alumno/a</th><th>Sec.</th><th>Cuota</th><th>Pagado</th><th>Avance</th><th>Saldo</th><th>Estado</th><th></th></tr></thead>
-      <tbody id="tb-fam"></tbody></table>
+    <div class="input-group">
+      <label>Codigo de validacion</label>
+      <input type="text" id="inp-code" placeholder="RC-2026-001-XXXXXXXX" maxlength="20" oninput="this.value=this.value.toUpperCase()">
+      <p class="hint">Codigo completo impreso bajo el codigo QR</p>
     </div>
+    <button class="btn" onclick="verificar()">Verificar autenticidad</button>
+    <div class="result" id="result"></div>
   </div>
 
-  <!-- REG PAGO -->
-  <div class="section" id="section-reg-pago">
-    <div class="card" style="max-width:600px;">
-      <div class="card-title">Registrar pago — se guarda en Google Sheets</div>
-      <div class="form-grid">
-        <div class="fg full"><label>Alumno/a *</label><select id="p-alu" onchange="onAluChange()"><option value="">Seleccionar...</option></select></div>
-        <div class="fg"><label>Sección</label><input id="p-sec" readonly></div>
-        <div class="fg"><label>Cuota total</label><input id="p-cuota" readonly></div>
-        <div class="fg"><label>Saldo pendiente</label><input id="p-saldo" readonly style="font-weight:600;color:#A32D2D;"></div>
-        <div class="fg"><label>Fecha *</label><input type="date" id="p-fecha"></div>
-        <div class="fg"><label>Monto (Q) *</label><input type="number" id="p-monto" placeholder="0" min="1"></div>
-        <div class="fg"><label>Tipo de pago</label><select id="p-tipo"><option>Pago completo</option><option>Abono</option></select></div>
-        <div class="fg"><label>Registrado por</label><input type="text" id="p-quien" placeholder="Tu nombre"></div>
-        <div class="fg full"><label>Enlace de evidencia (comprobante)</label><input type="url" id="p-link" placeholder="https://drive.google.com/..."></div>
-        <div class="fg full"><label>Observaciones</label><input type="text" id="p-obs" placeholder="Notas opcionales..."></div>
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;">
-        <button onclick="showTab('dash')">Cancelar</button>
-        <button id="btn-pago" class="btn-primary" onclick="registrarPago()">Guardar en Sheets</button>
-      </div>
-      <p class="err" id="p-err"></p>
-    </div>
-  </div>
-
-  <!-- REG GASTO -->
-  <div class="section" id="section-reg-gasto">
-    <div class="card" style="max-width:600px;">
-      <div class="card-title">Registrar gasto — se guarda en Google Sheets</div>
-      <div class="form-grid">
-        <div class="fg full"><label>Descripción *</label><input type="text" id="g-desc" placeholder="Ej: Anticipo DJ, flores decoración..."></div>
-        <div class="fg"><label>Categoría *</label>
-          <select id="g-cat"><option value="">Seleccionar...</option>
-            <option>Alimentación y bebidas</option><option>Música y entretenimiento</option>
-            <option>Decoración</option><option>Fotografía y video</option><option>Candy bar</option>
-            <option>Ceremonia religiosa</option><option>Logística y transporte</option>
-            <option>Imprevistos</option><option>Otros</option>
-          </select>
-        </div>
-        <div class="fg"><label>Proveedor *</label><input type="text" id="g-prov" placeholder="Nombre del proveedor o empresa"></div>
-        <div class="fg"><label>Fecha *</label><input type="date" id="g-fecha"></div>
-        <div class="fg"><label>Monto (Q) *</label><input type="number" id="g-monto" placeholder="0" min="1"></div>
-        <div class="fg"><label>Estado del pago</label><select id="g-est"><option>Pagado</option><option>Anticipo</option><option>Pendiente</option></select></div>
-        <div class="fg"><label>Registrado por</label><input type="text" id="g-quien" placeholder="Tu nombre"></div>
-        <div class="fg full"><label>Enlace evidencia / factura</label><input type="url" id="g-link" placeholder="https://drive.google.com/..."></div>
-        <div class="fg full"><label>Notas adicionales</label><input type="text" id="g-notas" placeholder="Detalles, condiciones, contacto..."></div>
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;">
-        <button onclick="showTab('dash')">Cancelar</button>
-        <button id="btn-gasto" class="btn-green" onclick="registrarGasto()">Guardar en Sheets</button>
-      </div>
-      <p class="err" id="g-err"></p>
-    </div>
-  </div>
-
-  <!-- HISTORIAL PAGOS -->
-  <div class="section" id="section-hist-pagos">
-    <div class="filter-row">
-      <input type="text" id="hp-s" placeholder="Buscar..." oninput="renderHistPagos()">
-      <select id="hp-sec" onchange="renderHistPagos()"><option value="">Todas</option><option>A</option><option>B</option><option>C</option><option>D</option></select>
-      <select id="hp-tipo" onchange="renderHistPagos()"><option value="">Todos los tipos</option><option>Pago completo</option><option>Abono</option></select>
-    </div>
-    <div class="card" style="overflow-x:auto;">
-      <table><thead><tr><th>Fecha</th><th>Alumno/a</th><th>Sec.</th><th>Tipo</th><th>Monto</th><th>Registrado por</th><th>Evidencia</th><th>Notas</th><th></th></tr></thead>
-      <tbody id="tb-hp"></tbody></table>
-    </div>
-    <div id="hp-tot" style="text-align:right;margin-top:10px;font-size:13px;color:var(--text2);"></div>
-  </div>
-
-  <!-- HISTORIAL GASTOS -->
-  <div class="section" id="section-hist-gastos">
-    <div class="filter-row">
-      <input type="text" id="hg-s" placeholder="Buscar descripción o proveedor..." oninput="renderHistGastos()">
-      <select id="hg-cat" onchange="renderHistGastos()"><option value="">Todas las categorías</option>
-        <option>Alimentación y bebidas</option><option>Música y entretenimiento</option>
-        <option>Decoración</option><option>Fotografía y video</option><option>Candy bar</option>
-        <option>Ceremonia religiosa</option><option>Logística y transporte</option>
-        <option>Imprevistos</option><option>Otros</option>
-      </select>
-      <select id="hg-est" onchange="renderHistGastos()"><option value="">Todos los estados</option><option>Pagado</option><option>Anticipo</option><option>Pendiente</option></select>
-    </div>
-    <div class="card" style="overflow-x:auto;">
-      <table><thead><tr><th>Fecha</th><th>Descripción</th><th>Categoría</th><th>Proveedor</th><th>Estado</th><th>Monto</th><th>Registrado por</th><th>Evidencia</th><th></th></tr></thead>
-      <tbody id="tb-hg"></tbody></table>
-    </div>
-    <div id="hg-tot" style="text-align:right;margin-top:10px;font-size:13px;color:var(--text2);"></div>
+  <div class="divider"></div>
+  <div class="footer">
+    <p>Comite de Fiesta de Graduacion 7mo. Grado 2026</p>
+    <p>Este sistema verifica la autenticidad de los recibos emitidos oficialmente.</p>
+    <p style="margin-top:8px;">¿Dudas? Contacta al comite directamente.</p>
   </div>
 </div>
 
 <script>
-const API = 'https://script.google.com/macros/s/AKfycbzKSaapJOim0odVAjJ3nVXz5TKpMTdkmJVdZ5xFkatmX25X9lxRd3H2YwK85iWrH9GOlA/exec';
-const GRAN_TOTAL = 144000;
+const RECIBOS = [
+  [1, "Anika Tanchez Escobar", "C", 1800.0, "08/05/2026", "RC-2026-001-5O53SSKA"],
+  [2, "Emily Rosenfelder", "C", 1900.0, "09/05/2026", "RC-2026-002-G3NJTBBB"],
+  [3, "Valeria Orantes", "C", 1900.0, "11/05/2026", "RC-2026-003-IISC2DVY"],
+  [4, "Stefanie Sofía van der Wals Galdámez", "C", 1500.0, "11/05/2026", "RC-2026-004-4ID2GQKA"],
+  [5, "Stefanie Sofía van der Wals Galdámez", "C", 100.0, "11/05/2026", "RC-2026-005-B7JM5JBY"],
+  [6, "Andrés Duarte", "B", 1900.0, "11/05/2026", "RC-2026-006-5OAOQ7JL"],
+  [7, "Maria Alejandra Aleman Martinez", "D", 400.0, "11/05/2026", "RC-2026-007-EHOSMXHU"],
+  [8, "Maria Alejandra Aleman Martinez", "D", 1500.0, "11/05/2026", "RC-2026-008-BYI4RE7H"],
+  [9, "Sofía Durán Sosa", "B", 1900.0, "11/05/2026", "RC-2026-009-5SZ5NUJR"],
+  [10, "Oliver Vogel Valladares", "C", 1900.0, "11/05/2026", "RC-2026-010-56WUNG2A"],
+  [11, "Lucas Isaac Sosa Arroyave", "B", 1900.0, "12/05/2026", "RC-2026-011-P6YGLZDT"],
+  [12, "Francesca Poggio", "B", 1800.0, "12/05/2026", "RC-2026-012-WSEGZRNV"],
+  [13, "Ignacio Moralejo", "B", 1900.0, "13/05/2026", "RC-2026-013-O6JOKBNO"],
+  [14, "Daniela Alvarado", "B", 1800.0, "13/05/2026", "RC-2026-014-PFBVR5UF"],
+  [15, "Luca de silvestris", "B", 1600.0, "13/05/2026", "RC-2026-015-HVFRGBHZ"],
+  [16, "Elisa Porres Funes", "B", 950.0, "14/05/2026", "RC-2026-016-J4QFJLOA"],
+  [17, "Mariana Leal Galvez", "B", 1900.0, "16/05/2026", "RC-2026-017-UQLNNYOW"],
+  [18, "Marcelo Escoffie Estrada", "D", 1500.0, "27/03/2026", "RC-2026-018-MVZYNBAL"],
+  [19, "Ignacio Del Cid", "A", 1500.0, "27/03/2026", "RC-2026-019-DKGJIRFS"],
+  [20, "David Escobar Rodriguez", "C", 1500.0, "26/03/2026", "RC-2026-020-P7FSNSJX"],
+  [21, "Victoria Montenegro", "A", 1500.0, "26/03/2026", "RC-2026-021-7GXXOTZ5"],
+  [22, "Ana Isabel Díaz Letona", "A", 1900.0, "19/05/2026", "RC-2026-022-EISNKFZX"]
+];
 
-const BASE = [{"nombre":"Ana Isabel Díaz Letona","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":1900},{"nombre":"Elisabeth Kaehler","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Fabiana del Valle","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Fátima Méndez","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Gabriel Soto Recinos","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Galilea Ramos Aguilar","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Ignacio Del Cid","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":1500},{"nombre":"José Javier Sologaistoa Gudiel","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Maria Pia Nadalini Lozano","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Timeo Freyschmidt","seccion":"A","categoria":"Mamá + Papá, sin misa","cuota":1800,"pb":0},{"nombre":"Victoria Montenegro Donis","seccion":"A","categoria":"1 adulto + misa","cuota":1600,"pb":1500},{"nombre":"Alejandro Cordón Aycinena","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Camila Rivera Gutiérrez","seccion":"A","categoria":"1 adulto, sin misa","cuota":1500,"pb":0},{"nombre":"André Yrjö Cruz Ortiz","seccion":"A","categoria":"1 adulto, sin misa","cuota":1800,"pb":0},{"nombre":"Kristine Koper","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Rodrigo Emiliano Ríos Piedrasanta","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Abril Cifuentes","seccion":"A","categoria":"Mamá + Papá, sin misa","cuota":1800,"pb":0},{"nombre":"Jose Javier Toruño Barrientos","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Jorge Adrián Miralbes Grijalva","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Daniela Arenas Barrios","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Iara Ximena Sierra Grosjean","seccion":"A","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Ana Paula Morataya García","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Andres Duarte","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":1900},{"nombre":"Daniela Alvarado","seccion":"B","categoria":"Mamá + Papá, sin misa","cuota":1800,"pb":1800},{"nombre":"Elisa Porres Funes","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":950},{"nombre":"Francesca Poggio","seccion":"B","categoria":"Mamá + Papá, sin misa","cuota":1800,"pb":1800},{"nombre":"Heiko José Celis Cruz","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Ignacio León Cabrera","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Ignacio Moralejo","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":1900},{"nombre":"Isabella Blanco","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Jennifer Duarte López","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Joaquín Mendizábal MartíndelCampo","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"José Eduardo Flores","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Karina Sofía Guzmán Vides","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Luca de Silvestris","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1600,"pb":1600},{"nombre":"Lucas Sosa","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":1900},{"nombre":"Luisa Núñez","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Mariana Leal","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":1900},{"nombre":"Nikolas","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Nina Charlotte Lam Wong","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Noah Freyschmidt","seccion":"B","categoria":"Solo Niño/a","cuota":1200,"pb":0},{"nombre":"Sofia Orantes","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Sofia Duran Sosa","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":1900},{"nombre":"Valentina Ruiz Sánchez","seccion":"B","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Alyssa Marie Barillas Alvarez","seccion":"B","categoria":"Mamá + Papá, sin misa","cuota":1800,"pb":0},{"nombre":"Adrián Armas","seccion":"C","categoria":"Mamá + Papá, sin misa","cuota":1800,"pb":0},{"nombre":"Anika Tánchez Escobar","seccion":"C","categoria":"Mamá + Papá, sin misa","cuota":1800,"pb":1800},{"nombre":"Christian Ayala Segovia","seccion":"C","categoria":"Mamá + Papá, sin misa","cuota":1800,"pb":0},{"nombre":"Daniela de la Cruz Velásquez","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Daniela Rámila","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"David Alejandro Escobar Rodríguez","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":1500},{"nombre":"Emily Rosenfelder","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":1900},{"nombre":"Emma Gomez Nott","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Evan Andrés Raimundo Osorio","seccion":"C","categoria":"1 adulto + misa","cuota":1600,"pb":0},{"nombre":"José Adrián Barahona","seccion":"C","categoria":"1 adulto + misa","cuota":1600,"pb":0},{"nombre":"Lourdes Sophie Díaz Alvarado","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Marco Díaz","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Matías Villagrán Sánchez","seccion":"C","categoria":"Mamá + Papá, sin misa","cuota":1800,"pb":0},{"nombre":"Natalia Prera","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Nicole Herman","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Oliver Vogel Valladares","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":1900},{"nombre":"Paulina García","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Rebecca Guillermo León","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Stefanie Sofía van der Wals Galdámez","seccion":"C","categoria":"1 adulto + misa","cuota":1600,"pb":1600},{"nombre":"Valeria Orantes Toledo","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":1900},{"nombre":"Victor Hugo Orellana Medina","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Emilio Morales Crocker","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Fernando Gomez","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Ana Paula Castro Rodriguez","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Marcela Orellana","seccion":"C","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Dannia Victoria Zapeta Méndez","seccion":"D","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Elena Leonor Lickes Marín","seccion":"D","categoria":"Mamá + Papá, sin misa","cuota":1800,"pb":0},{"nombre":"Larissa Flores","seccion":"D","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Marcelo Escoffie Estrada","seccion":"D","categoria":"1 adulto + misa","cuota":1600,"pb":1500},{"nombre":"Maria Alejandra Alemán Martínez","seccion":"D","categoria":"Mamá + Papá + misa","cuota":1900,"pb":1900},{"nombre":"Miguel Ángel Gamboa Ruiz","seccion":"D","categoria":"Mamá + Papá + misa","cuota":1900,"pb":0},{"nombre":"Pablo Gudiel López Cardona","seccion":"D","categoria":"1 adulto, sin misa","cuota":1800,"pb":0},{"nombre":"Santiago Yahir Jocol González","seccion":"D","categoria":"Mamá + Papá, sin misa","cuota":1800,"pb":0}];
+const LOOKUP = {};
+RECIBOS.forEach(r => { LOOKUP[r[0]] = {correlativo:r[0],nombre:r[1],seccion:r[2],monto:r[3],fecha:r[4],codigo:r[5]}; });
 
-let pagos=[], gastos=[], chartD=null, chartS=null;
-const Q=v=>'Q'+Math.round(v).toLocaleString('es-GT');
+function formatMonto(m){ return 'Q ' + Number(m).toLocaleString('es-GT',{minimumFractionDigits:2}); }
 
-function setSt(cl,txt){const e=document.getElementById('sync-st');e.className='sync-badge '+cl;e.textContent=txt;}
-
-async function apiGet(a){
-  const r=await fetch(`${API}?action=${a}`);
-  const d=await r.json();
-  if(d.error)throw new Error(d.error);
-  return d.data;
-}
-async function apiPost(b){
-  const r=await fetch(API,{method:'POST',body:JSON.stringify(b)});
-  const d=await r.json();
-  if(d.error)throw new Error(d.error);
-  return d;
-}
-
-async function syncAll(){
-  setSt('saving','Actualizando...');
-  try{
-    const[p,g]=await Promise.all([apiGet('getPagos'),apiGet('getGastos')]);
-    pagos=p; gastos=g;
-    setSt('ok','Sincronizado ✓');
-    updateMetrics();
-    const t=document.querySelector('.section.active')?.id?.replace('section-','');
-    if(t==='dash')updateCharts();
-    if(t==='familias')renderFamilias();
-    if(t==='hist-pagos')renderHistPagos();
-    if(t==='hist-gastos')renderHistGastos();
-  }catch(e){setSt('err','Sin conexión ✕');console.error(e);}
-  finally{document.getElementById('loading').style.display='none';}
-}
-
-const getPagN=n=>pagos.filter(p=>p.alumno===n).reduce((s,p)=>s+(parseFloat(p.monto)||0),0);
-const getPagT=n=>(BASE.find(f=>f.nombre===n)?.pb||0)+getPagN(n);
-const getEst=f=>{const p=getPagT(f.nombre);return p<=0?'Pendiente':p>=f.cuota?'Pagado':'Abonado';};
-const totRec=()=>BASE.reduce((s,f)=>s+Math.min(getPagT(f.nombre),f.cuota),0);
-const totGas=()=>gastos.reduce((s,g)=>s+(parseFloat(g.monto)||0),0);
-
-function showTab(t){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
-  document.getElementById('section-'+t).classList.add('active');
-  ['dash','familias','reg-pago','reg-gasto','hist-pagos','hist-gastos'].forEach((n,i)=>{
-    if(n===t)document.querySelectorAll('.nav button')[i].classList.add('active');
-  });
-  if(t==='dash')updateCharts();
-  if(t==='familias')renderFamilias();
-  if(t==='hist-pagos')renderHistPagos();
-  if(t==='hist-gastos')renderHistGastos();
+function verificar(){
+  const num = parseInt(document.getElementById('inp-num').value.trim(), 10);
+  const code = document.getElementById('inp-code').value.trim().toUpperCase();
+  const result = document.getElementById('result');
+  if(!num || !code){ showError(result,'Por favor ingresa el numero de recibo y el codigo de validacion.'); return; }
+  const entry = LOOKUP[num];
+  let html = '';
+  if(!entry){
+    html=`<div class="result-header"><div class="result-icon">❌</div><div><div class="result-title">Recibo no encontrado</div><div class="result-sub">El numero ${String(num).padStart(3,'0')} no existe en el sistema</div></div></div><div class="result-body"><div class="data-row"><span class="data-key">Estado</span><span class="data-val" style="color:#FCA5A5;">NO VALIDO</span></div><div class="data-row"><span class="data-key">Recomendacion</span><span class="data-val" style="font-size:13px;color:#FCA5A5;">Contacta al comite para verificar</span></div></div>`;
+    result.className='result show invalid';
+  } else if(entry.codigo===code){
+    html=`<div class="result-header"><div class="result-icon">✅</div><div><div class="result-title">Recibo autentico</div><div class="result-sub">Verificado · Comite Fiesta 7mo. 2026</div></div></div><div class="result-body"><div class="data-row"><span class="data-key">Familia</span><span class="data-val">${entry.nombre}</span></div><div class="data-row"><span class="data-key">Seccion</span><span class="data-val">Seccion ${entry.seccion}</span></div><div class="data-row"><span class="data-key">Fecha de pago</span><span class="data-val">${entry.fecha}</span></div><div class="data-row"><span class="data-key">Monto</span><span class="data-val monto">${formatMonto(entry.monto)}</span></div><div class="data-row"><span class="data-key">Codigo</span><span class="data-val mono">${entry.codigo}</span></div><div class="data-row"><span class="data-key">Estado</span><span class="data-val" style="color:#6EE7B7;font-size:16px;">✓ PAGO CONFIRMADO</span></div></div>`;
+    result.className='result show valid';
+  } else {
+    html=`<div class="result-header"><div class="result-icon">⚠️</div><div><div class="result-title">Codigo incorrecto</div><div class="result-sub">El recibo No. ${String(num).padStart(3,'0')} existe pero el codigo no coincide</div></div></div><div class="result-body"><div class="data-row"><span class="data-key">Estado</span><span class="data-val" style="color:#FCA5A5;">POSIBLE FALSIFICACION</span></div><div class="data-row"><span class="data-key">Accion</span><span class="data-val" style="font-size:13px;color:#FCA5A5;">Contacta inmediatamente al comite</span></div></div>`;
+    result.className='result show invalid';
+  }
+  result.innerHTML=html;
+  result.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-function updateMetrics(){
-  const rec=totRec(),gas=totGas(),bal=rec-gas;
-  const pag=BASE.filter(f=>getEst(f)==='Pagado').length,abo=BASE.filter(f=>getEst(f)==='Abonado').length;
-  document.getElementById('metrics').innerHTML=`
-    <div class="metric"><div class="metric-label">Total recaudado</div><div class="metric-value" style="color:#534AB7">${Q(rec)}</div><div class="metric-sub">${Math.round(rec/GRAN_TOTAL*100)}% de ${Q(GRAN_TOTAL)}</div></div>
-    <div class="metric"><div class="metric-label">Balance disponible</div><div class="metric-value" style="color:${bal>=0?'#3B6D11':'#A32D2D'}">${Q(bal)}</div><div class="metric-sub">Recaudado − Gastos pagados</div></div>
-    <div class="metric"><div class="metric-label">Familias al día</div><div class="metric-value" style="color:#3B6D11">${pag}</div><div class="metric-sub">${abo} abonadas · ${78-pag-abo} pendientes</div></div>
-    <div class="metric"><div class="metric-label">Por recaudar</div><div class="metric-value" style="color:#A32D2D">${Q(Math.max(0,GRAN_TOTAL-rec))}</div><div class="metric-sub">${78-pag-abo} familias pendientes</div></div>`;
-}
+function showError(el,msg){ el.innerHTML=`<div class="result-header"><div class="result-icon">⚠️</div><div><div class="result-title" style="font-size:15px;color:#FCD34D;">${msg}</div></div></div>`; el.className='result show invalid'; }
 
-function updateCharts(){
-  const rec=totRec(),gas=totGas(),pend=Math.max(0,GRAN_TOTAL-rec);
-  if(chartD)chartD.destroy();
-  chartD=new Chart(document.getElementById('cDonut'),{type:'doughnut',data:{labels:['Recaudado','Gastos','Pendiente'],datasets:[{data:[rec,gas,pend],backgroundColor:['#534AB7','#3B6D11','#E2E6F0'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:12}},tooltip:{callbacks:{label:c=>' '+Q(c.raw)}}},cutout:'62%'}});
-  const secs=['A','B','C','D'];
-  const rS=secs.map(s=>BASE.filter(f=>f.seccion===s).reduce((a,f)=>a+Math.min(getPagT(f.nombre),f.cuota),0));
-  const tS=secs.map(s=>BASE.filter(f=>f.seccion===s).reduce((a,f)=>a+f.cuota,0));
-  if(chartS)chartS.destroy();
-  chartS=new Chart(document.getElementById('cSec'),{type:'bar',data:{labels:secs,datasets:[{label:'Recaudado',data:rS,backgroundColor:'#534AB7'},{label:'Pendiente',data:tS.map((t,i)=>Math.max(0,t-rS[i])),backgroundColor:'#E2E6F0'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:12}}},scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>'Q'+Math.round(v/1000)+'k'}}}}});
-  document.getElementById('secProg').innerHTML=secs.map(s=>{
-    const fams=BASE.filter(f=>f.seccion===s),tot=fams.reduce((a,f)=>a+f.cuota,0),rec2=fams.reduce((a,f)=>a+Math.min(getPagT(f.nombre),f.cuota),0);
-    const pct=Math.round(rec2/tot*100),pag2=fams.filter(f=>getEst(f)==='Pagado').length,abo2=fams.filter(f=>getEst(f)==='Abonado').length;
-    const col=pct>=100?'#3B6D11':pct>=50?'#534AB7':'#854F0B';
-    return `<div style="margin-bottom:14px;"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;"><span><strong>Sección ${s}</strong> <span style="color:var(--text2);font-size:11px;">${fams.length} familias · ${pag2} pagadas · ${abo2} abonadas</span></span><span style="font-weight:600;">${Q(rec2)} / ${Q(tot)} — ${pct}%</span></div><div class="prog-bg"><div class="prog-fill" style="width:${pct}%;background:${col};"></div></div></div>`;
-  }).join('');
-  const r=totRec(),g=totGas();
-  document.getElementById('balance').innerHTML=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;font-size:13px;">
-    <div><div style="color:var(--text2);margin-bottom:3px;font-size:12px;">Presupuesto total</div><div style="font-weight:700;">${Q(GRAN_TOTAL)}</div></div>
-    <div><div style="color:var(--text2);margin-bottom:3px;font-size:12px;">Total recaudado</div><div style="font-weight:700;color:#534AB7">${Q(r)}</div></div>
-    <div><div style="color:var(--text2);margin-bottom:3px;font-size:12px;">Total gastado</div><div style="font-weight:700;color:#3B6D11">${Q(g)}</div></div>
-    <div><div style="color:var(--text2);margin-bottom:3px;font-size:12px;">Por recaudar</div><div style="font-weight:700;color:#A32D2D">${Q(Math.max(0,GRAN_TOTAL-r))}</div></div>
-    <div><div style="color:var(--text2);margin-bottom:3px;font-size:12px;">Balance neto</div><div style="font-weight:700;color:${r-g>=0?'#3B6D11':'#A32D2D'}">${Q(r-g)}</div></div>
-    <div><div style="color:var(--text2);margin-bottom:3px;font-size:12px;">Gastos pendientes</div><div style="font-weight:700;color:#854F0B">${Q(gastos.filter(g=>g.est!=='Pagado').reduce((s,g)=>s+(parseFloat(g.monto)||0),0))}</div></div>
-  </div>`;
-}
+document.addEventListener('keydown', e=>{ if(e.key==='Enter') verificar(); });
 
-function populateAlumnos(){
-  const sel=document.getElementById('p-alu');
-  [...BASE].sort((a,b)=>a.nombre.localeCompare(b.nombre,'es')).forEach(f=>{
-    const o=document.createElement('option');o.value=f.nombre;o.textContent=f.nombre+' ('+f.seccion+')';sel.appendChild(o);
-  });
-}
-
-function onAluChange(){
-  const n=document.getElementById('p-alu').value,f=BASE.find(x=>x.nombre===n);
-  if(!f){['p-sec','p-cuota','p-saldo'].forEach(id=>document.getElementById(id).value='');return;}
-  const pag=getPagT(n);
-  document.getElementById('p-sec').value='Sección '+f.seccion;
-  document.getElementById('p-cuota').value=Q(f.cuota);
-  document.getElementById('p-saldo').value=Q(Math.max(0,f.cuota-pag));
-  document.getElementById('p-tipo').value=pag>0?'Abono':'Pago completo';
-}
-
-async function registrarPago(){
-  const alumno=document.getElementById('p-alu').value,fecha=document.getElementById('p-fecha').value,monto=parseFloat(document.getElementById('p-monto').value);
-  const err=document.getElementById('p-err');
-  if(!alumno||!fecha||!monto||monto<=0){err.textContent='Completa alumno/a, fecha y monto.';err.style.display='block';return;}
-  const f=BASE.find(x=>x.nombre===alumno),saldo=f.cuota-getPagT(alumno);
-  if(monto>saldo+0.01){err.textContent=`El monto supera el saldo de ${Q(saldo)}.`;err.style.display='block';return;}
-  err.style.display='none';
-  const btn=document.getElementById('btn-pago');btn.textContent='Guardando...';btn.disabled=true;
-  try{
-    await apiPost({action:'addPago',pago:{alumno,sec:f.seccion,fecha,monto,tipo:document.getElementById('p-tipo').value,link:document.getElementById('p-link').value,obs:document.getElementById('p-obs').value,registradoPor:document.getElementById('p-quien').value||'Comité'}});
-    await syncAll();
-    ['p-alu','p-monto','p-link','p-obs','p-quien'].forEach(id=>{const el=document.getElementById(id);if(el.tagName==='SELECT')el.selectedIndex=0;else el.value='';});
-    ['p-sec','p-cuota','p-saldo'].forEach(id=>document.getElementById(id).value='');
-    showTab('familias');
-  }catch(e){err.textContent='Error: '+e.message;err.style.display='block';setSt('err','Error ✕');}
-  btn.textContent='Guardar en Sheets';btn.disabled=false;
-}
-
-async function registrarGasto(){
-  const desc=document.getElementById('g-desc').value.trim(),cat=document.getElementById('g-cat').value,prov=document.getElementById('g-prov').value.trim(),fecha=document.getElementById('g-fecha').value,monto=parseFloat(document.getElementById('g-monto').value);
-  const err=document.getElementById('g-err');
-  if(!desc||!cat||!prov||!fecha||!monto||monto<=0){err.textContent='Completa todos los campos obligatorios.';err.style.display='block';return;}
-  err.style.display='none';
-  const btn=document.getElementById('btn-gasto');btn.textContent='Guardando...';btn.disabled=true;
-  try{
-    await apiPost({action:'addGasto',gasto:{desc,cat,prov,fecha,monto,est:document.getElementById('g-est').value,link:document.getElementById('g-link').value,notas:document.getElementById('g-notas').value,registradoPor:document.getElementById('g-quien').value||'Comité'}});
-    await syncAll();
-    ['g-desc','g-cat','g-prov','g-monto','g-link','g-notas','g-quien'].forEach(id=>{const el=document.getElementById(id);if(el.tagName==='SELECT')el.selectedIndex=0;else el.value='';});
-    showTab('hist-gastos');
-  }catch(e){err.textContent='Error: '+e.message;err.style.display='block';setSt('err','Error ✕');}
-  btn.textContent='Guardar en Sheets';btn.disabled=false;
-}
-
-function renderFamilias(){
-  const s=document.getElementById('ff-s').value.toLowerCase(),sec=document.getElementById('ff-sec').value,est=document.getElementById('ff-est').value;
-  const filt=BASE.filter(f=>(!s||f.nombre.toLowerCase().includes(s))&&(!sec||f.seccion===sec)&&(!est||getEst(f)===est));
-  const tb=document.getElementById('tb-fam');
-  if(!filt.length){tb.innerHTML='<tr><td colspan="8" class="empty">Sin resultados.</td></tr>';return;}
-  tb.innerHTML=filt.map(f=>{
-    const pag=getPagT(f.nombre),saldo=Math.max(0,f.cuota-pag),est2=getEst(f),pct=Math.min(100,Math.round(pag/f.cuota*100));
-    const bc=est2==='Pagado'?'background:#EAF3DE;color:#3B6D11':est2==='Abonado'?'background:#FAEEDA;color:#854F0B':'background:#FCEBEB;color:#A32D2D';
-    const col=pct>=100?'#3B6D11':pct>=50?'#534AB7':'#854F0B';
-    return `<tr><td style="font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.nombre}</td><td><span class="badge" style="background:#DBEAFE;color:#1D4ED8;">${f.seccion}</span></td><td style="font-weight:600;">${Q(f.cuota)}</td><td style="color:#534AB7;font-weight:600;">${Q(pag)}</td><td><div style="display:flex;align-items:center;gap:6px;"><div class="prog-bg" style="width:60px;"><div class="prog-fill" style="width:${pct}%;background:${col};"></div></div><span style="font-size:11px;color:var(--text2);">${pct}%</span></div></td><td style="font-weight:600;color:${saldo>0?'#A32D2D':'#3B6D11'};">${Q(saldo)}</td><td><span class="badge" style="${bc}">${est2}</span></td><td><button class="btn-sm" onclick="document.getElementById('p-alu').value='${f.nombre.replace(/'/g,"\\'")}';onAluChange();showTab('reg-pago');">+ Pago</button></td></tr>`;
-  }).join('');
-}
-
-function renderHistPagos(){
-  const s=document.getElementById('hp-s').value.toLowerCase(),sec=document.getElementById('hp-sec').value,tipo=document.getElementById('hp-tipo').value;
-  const filt=[...pagos].filter(p=>(!s||(p.alumno||'').toLowerCase().includes(s))&&(!sec||p.sec===sec)&&(!tipo||p.tipo===tipo)).sort((a,b)=>String(b.id).localeCompare(String(a.id)));
-  const tb=document.getElementById('tb-hp');
-  if(!filt.length){tb.innerHTML='<tr><td colspan="9" class="empty">Sin pagos registrados aún.</td></tr>';document.getElementById('hp-tot').innerHTML='';return;}
-  tb.innerHTML=filt.map(p=>`<tr><td>${p.fecha}</td><td style="font-weight:600;">${p.alumno}</td><td><span class="badge" style="background:#DBEAFE;color:#1D4ED8;">${p.sec||''}</span></td><td><span class="badge" style="${(p.tipo||'')==='Abono'?'background:#FEF3C7;color:#92400E':'background:#D1FAE5;color:#065F46'}">${p.tipo||''}</span></td><td style="font-weight:600;color:#534AB7">${Q(parseFloat(p.monto)||0)}</td><td style="color:var(--text2);font-size:12px;">${p.registradoPor||''}</td><td>${p.link?`<a href="${p.link}" target="_blank" style="color:#534AB7;font-size:12px;">Ver</a>`:'—'}</td><td style="color:var(--text2);font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.obs||'—'}</td><td><button class="btn-sm" style="color:#A32D2D;border-color:#FCA5A5;" onclick="eliminarPago('${p.id}')">✕</button></td></tr>`).join('');
-  document.getElementById('hp-tot').innerHTML=`Total: <strong style="color:#534AB7">${Q(filt.reduce((s,p)=>s+(parseFloat(p.monto)||0),0))}</strong> — ${filt.length} registros`;
-}
-
-async function eliminarPago(id){
-  if(!confirm('¿Eliminar este pago del historial?'))return;
-  setSt('saving','Eliminando...');
-  try{await apiPost({action:'deletePago',id});await syncAll();renderHistPagos();}catch(e){setSt('err','Error ✕');}
-}
-
-function renderHistGastos(){
-  const s=document.getElementById('hg-s').value.toLowerCase(),cat=document.getElementById('hg-cat').value,est=document.getElementById('hg-est').value;
-  const filt=[...gastos].filter(g=>(!s||(g.desc+g.prov).toLowerCase().includes(s))&&(!cat||g.cat===cat)&&(!est||g.est===est)).sort((a,b)=>String(b.id).localeCompare(String(a.id)));
-  const tb=document.getElementById('tb-hg');
-  if(!filt.length){tb.innerHTML='<tr><td colspan="9" class="empty">Sin gastos registrados.</td></tr>';document.getElementById('hg-tot').innerHTML='';return;}
-  const bc=e=>e==='Pagado'?'background:#D1FAE5;color:#065F46':e==='Anticipo'?'background:#FEF3C7;color:#92400E':'background:#FEE2E2;color:#991B1B';
-  tb.innerHTML=filt.map(g=>`<tr><td>${g.fecha}</td><td style="font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${g.desc}</td><td style="font-size:12px;color:var(--text2);white-space:nowrap;">${g.cat}</td><td style="color:var(--text2);">${g.prov}</td><td><span class="badge" style="${bc(g.est)}">${g.est}</span></td><td style="font-weight:600;color:#3B6D11">${Q(parseFloat(g.monto)||0)}</td><td style="color:var(--text2);font-size:12px;">${g.registradoPor||''}</td><td>${g.link?`<a href="${g.link}" target="_blank" style="color:#534AB7;font-size:12px;">Ver</a>`:'—'}</td><td><button class="btn-sm" style="color:#A32D2D;border-color:#FCA5A5;" onclick="eliminarGasto('${g.id}')">✕</button></td></tr>`).join('');
-  document.getElementById('hg-tot').innerHTML=`Total: <strong style="color:#3B6D11">${Q(filt.reduce((s,g)=>s+(parseFloat(g.monto)||0),0))}</strong> — ${filt.length} registros`;
-}
-
-async function eliminarGasto(id){
-  if(!confirm('¿Eliminar este gasto?'))return;
-  setSt('saving','Eliminando...');
-  try{await apiPost({action:'deleteGasto',id});await syncAll();renderHistGastos();}catch(e){setSt('err','Error ✕');}
-}
-
-document.getElementById('p-fecha').value=new Date().toISOString().split('T')[0];
-document.getElementById('g-fecha').value=new Date().toISOString().split('T')[0];
-populateAlumnos();
-updateMetrics();
-syncAll();
+window.addEventListener('load',()=>{
+  const params=new URLSearchParams(window.location.search);
+  const codigo=params.get('codigo'), rec=params.get('rec');
+  if(rec) document.getElementById('inp-num').value=parseInt(rec,10);
+  if(codigo) document.getElementById('inp-code').value=codigo.toUpperCase();
+  if(rec && codigo) setTimeout(verificar,400);
+});
 </script>
 </body>
 </html>
