@@ -7,71 +7,144 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎉</text></svg>">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-:root{--bg:#F8F9FC;--surface:#fff;--surface2:#F1F3F9;--border:#E2E6F0;--text:#111827;--text2:#6B7280;--text3:#9CA3AF;--radius:10px;--shadow:0 1px 3px rgba(0,0,0,0.08);}
+:root{--bg:#F8F9FC;--surface:#fff;--surface2:#F1F3F9;--border:#E2E6F0;--text:#111827;--text2:#6B7280;--text3:#9CA3AF;--radius:10px;--shadow:0 1px 3px rgba(0,0,0,0.08);--purple:#534AB7;--green:#3B6D11;--red:#A32D2D;--amber:#854F0B;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;}
+
+/* ── TOPBAR ── */
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--shadow);}
 .topbar-brand{display:flex;flex-direction:column;}
 .topbar-title{font-size:15px;font-weight:700;}
 .topbar-sub{font-size:11px;color:var(--text2);}
-.nav{display:flex;gap:2px;background:var(--surface2);border-radius:8px;padding:3px;}
-.nav button{padding:5px 12px;border-radius:6px;border:none;background:none;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all 0.15s;}
-.nav button.active{background:var(--surface);color:#534AB7;box-shadow:var(--shadow);font-weight:600;}
-.right-bar{display:flex;align-items:center;gap:10px;}
-.sync-badge{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:default;}
+.right-bar{display:flex;align-items:center;gap:8px;}
+.sync-badge{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);}
 .sync-badge.ok{background:#EAF3DE;color:#3B6D11;border-color:#C0DD97;}
 .sync-badge.saving{background:#FAEEDA;color:#854F0B;border-color:#FAC775;}
 .sync-badge.err{background:#FCEBEB;color:#A32D2D;border-color:#F09595;}
 .sync-btn{padding:5px 12px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-size:12px;cursor:pointer;color:var(--text2);font-weight:500;}
-.sync-btn:hover{background:var(--surface2);}
-.main{padding:20px;max-width:1100px;margin:0 auto;}
+
+/* ── DESKTOP NAV ── */
+.nav{display:flex;gap:2px;background:var(--surface2);border-radius:8px;padding:3px;}
+.nav button{padding:5px 12px;border-radius:6px;border:none;background:none;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all 0.15s;}
+.nav button.active{background:var(--surface);color:var(--purple);box-shadow:var(--shadow);font-weight:600;}
+
+/* ── MOBILE BOTTOM NAV ── */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);z-index:100;box-shadow:0 -2px 8px rgba(0,0,0,0.08);}
+.mobile-nav-inner{display:grid;grid-template-columns:repeat(7,1fr);}
+.mobile-nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 2px 8px;border:none;background:none;color:var(--text3);font-size:9px;font-weight:500;cursor:pointer;gap:3px;transition:color 0.15s;}
+.mobile-nav button.active{color:var(--purple);}
+.mobile-nav button svg{width:20px;height:20px;stroke-width:1.8;}
+
+/* ── LAYOUT ── */
+.main{padding:16px;max-width:1100px;margin:0 auto;}
+
+/* ── METRICS ── */
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
 .metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);}
 .metric-label{font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500;}
 .metric-value{font-size:22px;font-weight:700;line-height:1;}
 .metric-sub{font-size:11px;color:var(--text3);margin-top:4px;}
+
+/* ── SECTIONS ── */
 .section{display:none;}.section.active{display:block;}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
 .card-title{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:14px;letter-spacing:0.3px;text-transform:uppercase;}
+
+/* ── TABLES ── */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
 th{text-align:left;padding:9px 12px;font-size:11px;font-weight:600;color:var(--text2);border-bottom:1px solid var(--border);background:var(--surface2);white-space:nowrap;}
 td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:var(--surface2);}
-.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
-.prog-bg{background:var(--surface2);border-radius:4px;height:6px;overflow:hidden;}
-.prog-fill{height:100%;border-radius:4px;transition:width 0.3s;}
+
+/* ── MOBILE CARD TABLE (familias) ── */
+.fam-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px;box-shadow:var(--shadow);display:none;}
+.fam-card-name{font-weight:700;font-size:14px;margin-bottom:6px;}
+.fam-card-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:0.5px solid var(--border);}
+.fam-card-row:last-child{border-bottom:none;}
+.fam-card-label{color:var(--text2);}
+
+/* ── FORMS ── */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
 .fg{display:flex;flex-direction:column;gap:5px;}
 .fg.full{grid-column:1/-1;}
 .fg label{font-size:12px;font-weight:600;color:var(--text2);}
-input,select,textarea{font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);width:100%;outline:none;transition:border-color 0.15s;}
-input:focus,select:focus{border-color:#534AB7;box-shadow:0 0 0 3px rgba(83,74,183,0.1);}
+input,select,textarea{font-size:16px;padding:10px 12px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);width:100%;outline:none;transition:border-color 0.15s;}
+input:focus,select:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(83,74,183,0.1);}
 input[readonly]{background:var(--surface2);color:var(--text2);}
+
+/* ── BUTTONS ── */
 button{padding:8px 16px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;}
 button:hover{background:var(--surface2);}
-.btn-primary{background:#534AB7;color:#fff;border-color:#534AB7;}
+.btn-primary{background:var(--purple);color:#fff;border-color:var(--purple);}
 .btn-primary:hover{background:#3C3489;}
-.btn-green{background:#3B6D11;color:#fff;border-color:#3B6D11;}
-.btn-green:hover{background:#27500A;}
-.btn-sm{padding:4px 10px;font-size:12px;}
+.btn-green{background:var(--green);color:#fff;border-color:var(--green);}
+.btn-sm{padding:5px 12px;font-size:12px;}
+
+/* ── MISC ── */
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+.prog-bg{background:var(--surface2);border-radius:4px;height:6px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:4px;transition:width 0.3s;}
 .filter-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
-.filter-row input,.filter-row select{width:auto;flex:1;min-width:140px;}
+.filter-row input,.filter-row select{width:auto;flex:1;min-width:120px;font-size:14px;}
 .empty{text-align:center;padding:40px;color:var(--text3);font-size:13px;}
 .err{font-size:12px;color:#A32D2D;margin-top:6px;display:none;}
 .chart-wrap{position:relative;height:200px;}
-.loading{position:fixed;inset:0;background:rgba(248,249,252,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;gap:12px;}
-.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:#534AB7;border-radius:50%;animation:spin 0.7s linear infinite;}
+.loading{position:fixed;inset:0;background:rgba(248,249,252,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;gap:12px;}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--purple);border-radius:50%;animation:spin 0.7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .loading-text{font-size:13px;color:var(--text2);font-weight:500;}
-@media(max-width:700px){
-  .metrics{grid-template-columns:1fr 1fr;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  /* Topbar mobile */
+  .topbar{height:auto;padding:10px 14px;flex-wrap:wrap;gap:6px;}
+  .right-bar{width:100%;justify-content:space-between;}
+  .nav{display:none;}
+  .mobile-nav{display:block;}
+  .main{padding:12px 12px 80px;}
+
+  /* Metrics: 2 columns */
+  .metrics{grid-template-columns:1fr 1fr;gap:8px;}
+  .metric{padding:10px 12px;}
+  .metric-value{font-size:18px;}
+
+  /* Charts: single column */
   .grid2{grid-template-columns:1fr;}
+  .chart-wrap{height:160px;}
+
+  /* Forms: single column */
   .form-grid{grid-template-columns:1fr;}
   .fg.full{grid-column:1;}
-  .nav button{padding:4px 8px;font-size:11px;}
-  .topbar{height:auto;padding:10px 14px;flex-wrap:wrap;gap:8px;}
+
+  /* Tables: scrollable */
+  .tbl-wrap{margin:0 -12px;border-radius:0;}
+
+  /* Familias: card view on mobile */
+  .fam-card{display:block;}
+  .fam-table-wrap{display:none;}
+
+  /* Stats cards: single column */
+  .stats-grid-4{grid-template-columns:1fr 1fr !important;}
+  .stats-grid-2{grid-template-columns:1fr !important;}
+
+  /* Filter row */
+  .filter-row input,.filter-row select{min-width:100%;flex:none;}
+
+  /* Buttons full width on mobile forms */
+  .form-actions{flex-direction:column;}
+  .form-actions button{width:100%;}
+
+  /* Card padding */
+  .card{padding:14px;}
+}
+
+@media(max-width:400px){
+  .metrics{grid-template-columns:1fr 1fr;}
+  .metric-value{font-size:16px;}
+  .stats-grid-4{grid-template-columns:1fr !important;}
 }
 </style>
 </head>
@@ -102,6 +175,39 @@ button:hover{background:var(--surface2);}
   </div>
 </div>
 
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mobile-nav" aria-label="Navegación principal">
+  <div class="mobile-nav-inner">
+    <button onclick="showTab('dash')" id="mob-dash" class="active" aria-label="Dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </button>
+    <button onclick="showTab('familias')" id="mob-familias" aria-label="Familias">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Familias
+    </button>
+    <button onclick="showTab('reg-pago')" id="mob-reg-pago" aria-label="Registrar pago">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      + Pago
+    </button>
+    <button onclick="showTab('reg-gasto')" id="mob-reg-gasto" aria-label="Registrar gasto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      + Gasto
+    </button>
+    <button onclick="showTab('hist-pagos')" id="mob-hist-pagos" aria-label="Historial pagos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Historial
+    </button>
+    <button onclick="showTab('hist-gastos')" id="mob-hist-gastos" aria-label="Gastos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Gastos
+    </button>
+    <button onclick="showTab('estadisticas')" id="mob-estadisticas" aria-label="Estadísticas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Stats
+    </button>
+  </div>
+</nav>
 <div class="main">
   <div class="metrics" id="metrics"></div>
 
@@ -122,10 +228,13 @@ button:hover{background:var(--surface2);}
       <select id="ff-sec" onchange="renderFamilias()"><option value="">Todas las secciones</option><option>A</option><option>B</option><option>C</option><option>D</option></select>
       <select id="ff-est" onchange="renderFamilias()"><option value="">Todos los estados</option><option>Pagado</option><option>Abonado</option><option>Pendiente</option></select>
     </div>
-    <div class="card" style="overflow-x:auto;">
+    <!-- Desktop table -->
+    <div class="card tbl-wrap fam-table-wrap">
       <table><thead><tr><th>Alumno/a</th><th>Sec.</th><th>Cuota</th><th>Pagado</th><th>Avance</th><th>Saldo</th><th>Estado</th><th></th></tr></thead>
       <tbody id="tb-fam"></tbody></table>
     </div>
+    <!-- Mobile cards -->
+    <div id="fam-cards"></div>
   </div>
 
   <!-- REG PAGO -->
@@ -274,9 +383,14 @@ const totGas=()=>gastos.reduce((s,g)=>s+(parseFloat(g.monto)||0),0);
 function showTab(t){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.mobile-nav button').forEach(b=>b.classList.remove('active'));
   document.getElementById('section-'+t).classList.add('active');
   ['dash','familias','reg-pago','reg-gasto','hist-pagos','hist-gastos','estadisticas'].forEach((n,i)=>{
-    if(n===t)document.querySelectorAll('.nav button')[i].classList.add('active');
+    if(n===t){
+      document.querySelectorAll('.nav button')[i]?.classList.add('active');
+      const mob=document.getElementById('mob-'+n);
+      if(mob) mob.classList.add('active');
+    }
   });
   if(t==='dash')updateCharts();
   if(t==='familias')renderFamilias();
@@ -375,13 +489,38 @@ function renderFamilias(){
   const s=document.getElementById('ff-s').value.toLowerCase(),sec=document.getElementById('ff-sec').value,est=document.getElementById('ff-est').value;
   const filt=BASE.filter(f=>(!s||f.nombre.toLowerCase().includes(s))&&(!sec||f.seccion===sec)&&(!est||getEst(f)===est));
   const tb=document.getElementById('tb-fam');
-  if(!filt.length){tb.innerHTML='<tr><td colspan="8" class="empty">Sin resultados.</td></tr>';return;}
-  tb.innerHTML=filt.map(f=>{
+  const cards=document.getElementById('fam-cards');
+  if(!filt.length){
+    tb.innerHTML='<tr><td colspan="8" class="empty">Sin resultados.</td></tr>';
+    if(cards) cards.innerHTML='<div class="empty">Sin resultados.</div>';
+    return;
+  }
+  const rows=filt.map(f=>{
     const pag=getPagT(f.nombre),saldo=Math.max(0,f.cuota-pag),est2=getEst(f),pct=Math.min(100,Math.round(pag/f.cuota*100));
     const bc=est2==='Pagado'?'background:#EAF3DE;color:#3B6D11':est2==='Abonado'?'background:#FAEEDA;color:#854F0B':'background:#FCEBEB;color:#A32D2D';
     const col=pct>=100?'#3B6D11':pct>=50?'#534AB7':'#854F0B';
-    return `<tr><td style="font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.nombre}</td><td><span class="badge" style="background:#DBEAFE;color:#1D4ED8;">${f.seccion}</span></td><td style="font-weight:600;">${Q(f.cuota)}</td><td style="color:#534AB7;font-weight:600;">${Q(pag)}</td><td><div style="display:flex;align-items:center;gap:6px;"><div class="prog-bg" style="width:60px;"><div class="prog-fill" style="width:${pct}%;background:${col};"></div></div><span style="font-size:11px;color:var(--text2);">${pct}%</span></div></td><td style="font-weight:600;color:${saldo>0?'#A32D2D':'#3B6D11'};">${Q(saldo)}</td><td><span class="badge" style="${bc}">${est2}</span></td><td><button class="btn-sm" onclick="document.getElementById('p-alu').value='${f.nombre.replace(/'/g,"\\'")}';onAluChange();showTab('reg-pago');">+ Pago</button></td></tr>`;
-  }).join('');
+    return {f,pag,saldo,est2,pct,bc,col};
+  });
+  tb.innerHTML=rows.map(({f,pag,saldo,est2,pct,bc,col})=>`<tr>
+    <td style="font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.nombre}</td>
+    <td><span class="badge" style="background:#DBEAFE;color:#1D4ED8;">${f.seccion}</span></td>
+    <td style="font-weight:600;">${Q(f.cuota)}</td>
+    <td style="color:#534AB7;font-weight:600;">${Q(pag)}</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div class="prog-bg" style="width:60px;"><div class="prog-fill" style="width:${pct}%;background:${col};"></div></div><span style="font-size:11px;color:var(--text2);">${pct}%</span></div></td>
+    <td style="font-weight:600;color:${saldo>0?'#A32D2D':'#3B6D11'};">${Q(saldo)}</td>
+    <td><span class="badge" style="${bc}">${est2}</span></td>
+    <td><button class="btn-sm" onclick="document.getElementById('p-alu').value='${f.nombre.replace(/'/g,"\\'")}';onAluChange();showTab('reg-pago');">+ Pago</button></td>
+  </tr>`).join('');
+  if(cards) cards.innerHTML=rows.map(({f,pag,saldo,est2,pct,bc,col})=>`
+    <div class="fam-card">
+      <div class="fam-card-name">${f.nombre} <span class="badge" style="background:#DBEAFE;color:#1D4ED8;font-size:10px;">${f.seccion}</span></div>
+      <div style="margin:6px 0 8px;"><div class="prog-bg"><div class="prog-fill" style="width:${pct}%;background:${col};"></div></div></div>
+      <div class="fam-card-row"><span class="fam-card-label">Cuota</span><strong>${Q(f.cuota)}</strong></div>
+      <div class="fam-card-row"><span class="fam-card-label">Pagado</span><span style="color:#534AB7;font-weight:600;">${Q(pag)} (${pct}%)</span></div>
+      <div class="fam-card-row"><span class="fam-card-label">Saldo</span><span style="font-weight:600;color:${saldo>0?'#A32D2D':'#3B6D11'};">${Q(saldo)}</span></div>
+      <div class="fam-card-row" style="border-bottom:none;"><span class="fam-card-label">Estado</span><span class="badge" style="${bc}">${est2}</span></div>
+      <button class="btn-primary" style="width:100%;margin-top:12px;" onclick="document.getElementById('p-alu').value='${f.nombre.replace(/'/g,"\\'")}';onAluChange();showTab('reg-pago');">+ Registrar pago</button>
+    </div>`).join('');
 }
 
 function renderHistPagos(){
