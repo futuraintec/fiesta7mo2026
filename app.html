@@ -97,6 +97,7 @@ button:hover{background:var(--surface2);}
       <button onclick="showTab('reg-gasto')">+ Gasto</button>
       <button onclick="showTab('hist-pagos')">Historial</button>
       <button onclick="showTab('hist-gastos')">Gastos</button>
+      <button onclick="showTab('estadisticas')">📊 Estadísticas</button>
     </div>
   </div>
 </div>
@@ -213,6 +214,15 @@ button:hover{background:var(--surface2);}
     </div>
     <div id="hg-tot" style="text-align:right;margin-top:10px;font-size:13px;color:var(--text2);"></div>
   </div>
+
+  <!-- ESTADÍSTICAS -->
+  <div class="section" id="section-estadisticas">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+      <div class="card" id="stats-asistentes"></div>
+      <div class="card" id="stats-misa"></div>
+    </div>
+    <div class="card" id="stats-categorias"></div>
+  </div>
 </div>
 
 <script>
@@ -265,13 +275,14 @@ function showTab(t){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
   document.getElementById('section-'+t).classList.add('active');
-  ['dash','familias','reg-pago','reg-gasto','hist-pagos','hist-gastos'].forEach((n,i)=>{
+  ['dash','familias','reg-pago','reg-gasto','hist-pagos','hist-gastos','estadisticas'].forEach((n,i)=>{
     if(n===t)document.querySelectorAll('.nav button')[i].classList.add('active');
   });
   if(t==='dash')updateCharts();
   if(t==='familias')renderFamilias();
   if(t==='hist-pagos')renderHistPagos();
   if(t==='hist-gastos')renderHistGastos();
+  if(t==='estadisticas')renderEstadisticas();
 }
 
 function updateMetrics(){
@@ -402,6 +413,120 @@ async function eliminarGasto(id){
   if(!confirm('¿Eliminar este gasto?'))return;
   setSt('saving','Eliminando...');
   try{await apiPost({action:'deleteGasto',id});await syncAll();renderHistGastos();}catch(e){setSt('err','Error ✕');}
+}
+
+function renderEstadisticas(){
+  // ── Cálculos de asistentes ──────────────────────────────────────────────
+  const cats = {
+    'Mamá + Papá + misa':    {adultos:2, misa:true},
+    'Mamá + Papá, sin misa': {adultos:2, misa:false},
+    '1 adulto + misa':       {adultos:1, misa:true},
+    '1 adulto, sin misa':    {adultos:1, misa:false},
+  };
+  let totalAdultos=0, totalNinos=0, totalMisa=0, totalSinMisa=0;
+  const catCount = {};
+  BASE.forEach(f=>{
+    const c = cats[f.categoria] || {adultos:2, misa:true};
+    totalAdultos += c.adultos;
+    totalNinos   += 1;
+    if(c.misa) totalMisa++; else totalSinMisa++;
+    catCount[f.categoria] = (catCount[f.categoria]||0)+1;
+  });
+  const totalPersonas = totalAdultos + totalNinos;
+
+  // ── Card 1: Asistentes ──────────────────────────────────────────────────
+  document.getElementById('stats-asistentes').innerHTML=`
+    <div class="card-title">👥 Total de asistentes a la fiesta</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div style="text-align:center;background:var(--surface2);border-radius:var(--radius);padding:14px;">
+        <div style="font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:500;">ADULTOS</div>
+        <div style="font-size:36px;font-weight:700;color:#534AB7;">${totalAdultos}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;">papás y mamás</div>
+      </div>
+      <div style="text-align:center;background:var(--surface2);border-radius:var(--radius);padding:14px;">
+        <div style="font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:500;">NIÑOS/AS</div>
+        <div style="font-size:36px;font-weight:700;color:#3B6D11;">${totalNinos}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;">alumnos graduandos</div>
+      </div>
+      <div style="text-align:center;background:var(--surface2);border-radius:var(--radius);padding:14px;">
+        <div style="font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:500;">TOTAL</div>
+        <div style="font-size:36px;font-weight:700;color:#A32D2D;">${totalPersonas}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;">personas en total</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--text2);border-top:0.5px solid var(--border);padding-top:10px;">
+      <strong>Por sección:</strong>
+      ${['A','B','C','D'].map(s=>{
+        const fams=BASE.filter(f=>f.seccion===s);
+        const ads=fams.reduce((a,f)=>{const c=cats[f.categoria]||{adultos:2};return a+c.adultos;},0);
+        return `<span style="margin-right:14px;">Sec. ${s}: <strong>${ads}</strong> adultos + <strong>${fams.length}</strong> niños/as = <strong>${ads+fams.length}</strong></span>`;
+      }).join('')}
+    </div>`;
+
+  // ── Card 2: Misa ────────────────────────────────────────────────────────
+  const pct = Math.round(totalMisa/BASE.length*100);
+  document.getElementById('stats-misa').innerHTML=`
+    <div class="card-title">⛪ Participación en Misa de Acción de Gracias</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div style="text-align:center;background:#EAF3DE;border-radius:var(--radius);padding:14px;">
+        <div style="font-size:11px;color:#3B6D11;margin-bottom:6px;font-weight:500;">✓ SÍ PARTICIPAN</div>
+        <div style="font-size:36px;font-weight:700;color:#3B6D11;">${totalMisa}</div>
+        <div style="font-size:11px;color:#3B6D11;margin-top:4px;">${pct}% de las familias</div>
+      </div>
+      <div style="text-align:center;background:#FCEBEB;border-radius:var(--radius);padding:14px;">
+        <div style="font-size:11px;color:#A32D2D;margin-bottom:6px;font-weight:500;">✗ NO PARTICIPAN</div>
+        <div style="font-size:36px;font-weight:700;color:#A32D2D;">${totalSinMisa}</div>
+        <div style="font-size:11px;color:#A32D2D;margin-top:4px;">${100-pct}% de las familias</div>
+      </div>
+    </div>
+    <div style="background:var(--surface2);border-radius:var(--radius);padding:10px 14px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;">
+        <span style="color:var(--text2);">Avance de confirmación de misa</span>
+        <span style="font-weight:600;">${totalMisa} / ${BASE.length}</span>
+      </div>
+      <div class="prog-bg"><div class="prog-fill" style="width:${pct}%;background:#3B6D11;"></div></div>
+    </div>
+    <div style="font-size:12px;color:var(--text2);border-top:0.5px solid var(--border);padding-top:10px;margin-top:10px;">
+      <strong>Nota:</strong> Nikolas Schoeningh Rohrmoser (Sec. B) asistirá únicamente a la misa — participación simbólica sin cuota de fiesta.
+    </div>`;
+
+  // ── Card 3: Categorías ──────────────────────────────────────────────────
+  const catDefs = [
+    {key:'Mamá + Papá + misa',    label:'Mamá + Papá + Niño/a — con misa',    color:'#3B6D11', bg:'#EAF3DE'},
+    {key:'Mamá + Papá, sin misa', label:'Mamá + Papá + Niño/a — sin misa',    color:'#854F0B', bg:'#FAEEDA'},
+    {key:'1 adulto + misa',       label:'1 adulto + Niño/a — con misa',        color:'#185FA5', bg:'#E6F1FB'},
+    {key:'1 adulto, sin misa',    label:'1 adulto + Niño/a — sin misa',        color:'#7C3AED', bg:'#EDE9FE'},
+  ];
+  const maxCat = Math.max(...catDefs.map(c=>catCount[c.key]||0));
+  document.getElementById('stats-categorias').innerHTML=`
+    <div class="card-title">📋 Clasificación por categoría de participación</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;">
+      ${catDefs.map(c=>{
+        const n=catCount[c.key]||0;
+        const cuota = c.key==='Mamá + Papá + misa'?1900:c.key==='Mamá + Papá, sin misa'?1800:c.key==='1 adulto + misa'?1600:1500;
+        return `<div style="background:${c.bg};border-radius:var(--radius);padding:14px;border-left:4px solid ${c.color};">
+          <div style="font-size:11px;color:${c.color};font-weight:600;margin-bottom:8px;">${c.label}</div>
+          <div style="font-size:32px;font-weight:700;color:${c.color};">${n}</div>
+          <div style="font-size:11px;color:${c.color};margin-top:4px;">familias · Cuota Q${cuota.toLocaleString()}</div>
+          <div style="font-size:11px;color:${c.color};margin-top:2px;">Subtotal: Q${(n*cuota).toLocaleString()}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="background:var(--surface2);border-radius:var(--radius);padding:12px 16px;">
+      ${catDefs.map(c=>{
+        const n=catCount[c.key]||0;
+        const pct2=Math.round(n/BASE.length*100);
+        return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <span style="font-size:12px;color:var(--text2);width:240px;">${c.label}</span>
+          <div class="prog-bg" style="flex:1;"><div class="prog-fill" style="width:${pct2}%;background:${c.color};"></div></div>
+          <span style="font-size:12px;font-weight:600;color:${c.color};width:50px;text-align:right;">${n} (${pct2}%)</span>
+        </div>`;
+      }).join('')}
+      <div style="border-top:0.5px solid var(--border);margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;font-size:12px;">
+        <span style="color:var(--text2);">Total presupuesto</span>
+        <strong>${Q(BASE.reduce((s,f)=>s+f.cuota,0))}</strong>
+      </div>
+    </div>`;
 }
 
 document.getElementById('p-fecha').value=new Date().toISOString().split('T')[0];
