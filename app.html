@@ -20,6 +20,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .sync-badge{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);}
 .sync-badge.ok{background:#EAF3DE;color:#3B6D11;border-color:#C0DD97;}
 .sync-badge.saving{background:#FAEEDA;color:#854F0B;border-color:#FAC775;}
+.sync-alert{display:none;margin:0 0 16px;padding:12px 16px;border-radius:10px;background:#FCEBEB;border:1px solid #F09595;color:#A32D2D;font-size:13px;line-height:1.45;}
+.sync-alert.show{display:block;}
+.sync-alert.warn{background:#FAEEDA;border-color:#FAC775;color:#854F0B;}
 .sync-badge.err{background:#FCEBEB;color:#A32D2D;border-color:#F09595;}
 .sync-btn{padding:5px 12px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-size:12px;cursor:pointer;color:var(--text2);font-weight:500;}
 
@@ -209,6 +212,7 @@ button:hover{background:var(--surface2);}
   </div>
 </nav>
 <div class="main">
+  <div class="sync-alert" id="sync-alert"></div>
   <div class="metrics" id="metrics"></div>
 
   <!-- DASHBOARD -->
@@ -335,6 +339,7 @@ button:hover{background:var(--surface2);}
 </div>
 
 <script>
+// ⚠️ URL de la implementación del Apps Script. Si se crea una implementación nueva, reemplaza SOLO esta línea.
 const API = 'https://script.google.com/macros/s/AKfycbzKSaapJOim0odVAjJ3nVXz5TKpMTdkmJVdZ5xFkatmX25X9lxRd3H2YwK85iWrH9GOlA/exec';
 const GRAN_TOTAL = 137800;
 
@@ -346,32 +351,59 @@ const Q=v=>'Q'+Math.round(v).toLocaleString('es-GT');
 function setSt(cl,txt){const e=document.getElementById('sync-st');e.className='sync-badge '+cl;e.textContent=txt;}
 
 async function apiGet(a){
-  const r=await fetch(`${API}?action=${a}`);
-  const d=await r.json();
+  const r=await fetch(`${API}?action=${a}`,{cache:'no-store'});
+  const txt=await r.text();
+  let d;
+  try{d=JSON.parse(txt);}catch(_){throw new Error('El Apps Script no respondió con datos (implementación no disponible o sin permisos).');}
   if(d.error)throw new Error(d.error);
   return d.data;
 }
 async function apiPost(b){
   const r=await fetch(API,{method:'POST',body:JSON.stringify(b)});
-  const d=await r.json();
+  const txt=await r.text();
+  let d;
+  try{d=JSON.parse(txt);}catch(_){throw new Error('No se pudo guardar: el Apps Script no está disponible.');}
   if(d.error)throw new Error(d.error);
   return d;
+}
+
+const CACHE_KEY='fiesta7mo_cache_v1';
+function saveCache(){try{localStorage.setItem(CACHE_KEY,JSON.stringify({pagos,gastos,ts:new Date().toISOString()}));}catch(_){}}
+function loadCache(){try{const c=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');if(c&&Array.isArray(c.pagos)){pagos=c.pagos;gastos=c.gastos||[];return c;}}catch(_){}return null;}
+function showAlert(kind,html){const a=document.getElementById('sync-alert');a.className='sync-alert show'+(kind==='warn'?' warn':'');a.innerHTML=html;}
+function hideAlert(){document.getElementById('sync-alert').className='sync-alert';}
+function refreshActive(){
+  updateMetrics();
+  const t=document.querySelector('.section.active')?.id?.replace('section-','');
+  if(t==='dash')updateCharts();
+  if(t==='familias')renderFamilias();
+  if(t==='hist-pagos')renderHistPagos();
+  if(t==='hist-gastos')renderHistGastos();
+  if(t==='estadisticas')renderEstadisticas();
 }
 
 async function syncAll(){
   setSt('saving','Actualizando...');
   try{
     const[p,g]=await Promise.all([apiGet('getPagos'),apiGet('getGastos')]);
-    pagos=p; gastos=g;
+    pagos=p||[]; gastos=g||[];
+    saveCache(); hideAlert();
     setSt('ok','Sincronizado ✓');
-    updateMetrics();
-    const t=document.querySelector('.section.active')?.id?.replace('section-','');
-    if(t==='dash')updateCharts();
-    if(t==='familias')renderFamilias();
-    if(t==='hist-pagos')renderHistPagos();
-    if(t==='hist-gastos')renderHistGastos();
-  }catch(e){setSt('err','Sin conexión ✕');console.error(e);}
-  finally{document.getElementById('loading').style.display='none';}
+  }catch(e){
+    console.error(e);
+    setSt('err','Sin conexión ✕');
+    const c=loadCache();
+    if(c){
+      const f=new Date(c.ts).toLocaleString('es-GT');
+      showAlert('warn',`<strong>⚠️ Sin conexión con Google Sheets.</strong> Se muestran los datos de la última sincronización en este dispositivo (${f}). Pagos o gastos registrados después no aparecen. No registres pagos nuevos hasta restablecer la conexión.`);
+    }else{
+      pagos=[];gastos=[];
+      showAlert('err',`<strong>⚠️ No se pudieron cargar los pagos desde Google Sheets.</strong> Las cifras de abajo incluyen <u>solo los pagos iniciales</u> grabados en la app, no los registrados por el comité. No registres pagos nuevos hasta restablecer la conexión.<br><span style="font-size:11px;opacity:.8">Detalle: ${e.message}</span>`);
+    }
+  }finally{
+    refreshActive();
+    document.getElementById('loading').style.display='none';
+  }
 }
 
 const getPagN=n=>pagos.filter(p=>p.alumno===n).reduce((s,p)=>s+(parseFloat(p.monto)||0),0);
@@ -405,8 +437,8 @@ function updateMetrics(){
   document.getElementById('metrics').innerHTML=`
     <div class="metric"><div class="metric-label">Total recaudado</div><div class="metric-value" style="color:#534AB7">${Q(rec)}</div><div class="metric-sub">${Math.round(rec/GRAN_TOTAL*100)}% de ${Q(GRAN_TOTAL)}</div></div>
     <div class="metric"><div class="metric-label">Balance disponible</div><div class="metric-value" style="color:${bal>=0?'#3B6D11':'#A32D2D'}">${Q(bal)}</div><div class="metric-sub">Recaudado − Gastos pagados</div></div>
-    <div class="metric"><div class="metric-label">Familias al día</div><div class="metric-value" style="color:#3B6D11">${pag}</div><div class="metric-sub">${abo} abonadas · ${76-pag-abo} pendientes</div></div>
-    <div class="metric"><div class="metric-label">Por recaudar</div><div class="metric-value" style="color:#A32D2D">${Q(Math.max(0,GRAN_TOTAL-rec))}</div><div class="metric-sub">${76-pag-abo} familias pendientes</div></div>`;
+    <div class="metric"><div class="metric-label">Familias al día</div><div class="metric-value" style="color:#3B6D11">${pag}</div><div class="metric-sub">${abo} abonadas · ${BASE.length-pag-abo} pendientes</div></div>
+    <div class="metric"><div class="metric-label">Por recaudar</div><div class="metric-value" style="color:#A32D2D">${Q(Math.max(0,GRAN_TOTAL-rec))}</div><div class="metric-sub">${BASE.length-pag-abo} familias pendientes</div></div>`;
 }
 
 function updateCharts(){
@@ -676,6 +708,7 @@ document.getElementById('p-fecha').value=new Date().toISOString().split('T')[0];
 document.getElementById('g-fecha').value=new Date().toISOString().split('T')[0];
 populateAlumnos();
 updateMetrics();
+updateCharts();
 syncAll();
 </script>
 </body>
